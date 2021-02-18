@@ -1,5 +1,8 @@
 import pyodbc
 
+from tabledef import Tabledef
+from columndef import Columndef
+
 
 def Connect(server, port, dbname):
     connstr = ('Driver={SQL Server Native Client 11.0};'
@@ -8,6 +11,11 @@ def Connect(server, port, dbname):
                 ';Trusted_Connection=yes;')
 
     connection = pyodbc.connect(connstr)
+
+
+    # cursor = connection.cursor()
+    # for table in cursor.tables():
+    #     print(table.table_name)
 
     return connection
 
@@ -93,13 +101,17 @@ def main() -> None:
         server = 'localhost'
         port = '1433'
         dbname = 'pubs'
-        conn = Connect(server, port, dbname)        
-        tables = GetTables(conn)
+        schema = 'dbo'
+        conn = Connect(server, port, dbname)
 
-        EmitPumlHeader(conn)
-        for table in tables:
-            EmitTable(conn, table)
-        EmitPumlFooter()
+        tables = Tabledef.Get(conn, schema)
+
+        # tables = GetTables(conn)
+
+        # EmitPumlHeader(conn)
+        # for table in tables:
+        #     EmitTable(conn, table)
+        # EmitPumlFooter()
 
     except Exception as e:
         print('EXCEPTION: ' + e)
