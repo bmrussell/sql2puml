@@ -1,0 +1,25 @@
+Foreign Keys
+------------
+authors:
+        FK__titleauth__au_id__44FF419A = authors.au_id = titleauthor.au_id
+discounts:
+employee:
+jobs:
+        FK__employee__job_id__5BE2A6F2 = jobs.job_id = employee.job_id
+pub_info:
+publishers:
+        FK__employee__pub_id__5EBF139D = publishers.pub_id = employee.pub_id
+        FK__pub_info__pub_id__571DF1D5 = publishers.pub_id = pub_info.pub_id
+        FK__titles__pub_id__412EB0B6 = publishers.pub_id = titles.pub_id
+roysched:
+sales:
+stores:
+        FK__discounts__stor___4F7CD00D = stores.stor_id = discounts.stor_id
+        FK__sales__stor_id__4AB81AF0 = stores.stor_id = sales.stor_id
+sysdiagrams:
+titleauthor:
+titles:
+        FK__roysched__title___4D94879B = titles.title_id = roysched.title_id
+        FK__sales__title_id__4BAC3F29 = titles.title_id = sales.title_id
+        FK__titleauth__title__45F365D3 = titles.title_id = titleauthor.title_id
+titleview:
