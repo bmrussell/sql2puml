@@ -1,12 +1,25 @@
 # sql2puml
 
-Convert MS SQL Schema to PlantUML diagram source
+Convert MS SQL Schema to PlantUML diagram source using Python
 
-Python version work in progress to address following TSQL limitations:
+# Usage
 
-- Views are included. I should exclude those
-- Composite keys aren't catered for well. e.g. on pubs, the Fk relationship from authors to titleauthors is identified as 1:1 where it should be 1:many. This is because the code isn't clever enough to see that au_id is part of a composite key (non unique) and not the whole key
-- Portability between RDBMSs
+ python sql2puml.py OPTIONS
+ 
+ |Switch|meaning|
+ |--|--|
+ |**Mandatory**||
+ |-d, --database *database_name*|Name of database to get diagram for|
+ | **Optional**||
+ |-s, --schema *schema name*|Name of schema within the database, default dbo|
+ |-h, --host *server name*|Server to connect to, default localhost|
+ |-p, --port *port*|Port to connect to, default 1433|
+ |-o, --out *output filename*|Filename to save output to, default is write to console|
+
+**Example:** 
+
+    Python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo
+
 
 
 ![](pubs.png)

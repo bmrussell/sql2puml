@@ -81,14 +81,14 @@ def printStderr(*a):
 
 
 def PrintUsage():
-    printStderr('Usage: SQL2PUML.PY OPTIONS [FILE]')
+    printStderr('Usage: python sql2puml.py OPTIONS [FILE]')
     printStderr('OPTIONS')
     printStderr('\t-d, --database <database name>\tName of database to get diagram for')
     printStderr('\t-s, --schema <schema name>\tName of schema within the database, default dbo')
     printStderr('\t[-h, --host <server name>]\tServer to connect to, default localhost')
     printStderr('\t[-p, --port <SQL listen port>]\tPort to connect to, default 1433')
     printStderr('\t[-o, --out <output filename>]\tFilename to save output to, default write to console')
-    printStderr('\nExample: SQL2PUML.PY -server localhost -port 1433 -dbname pubs -schema dbo')
+    printStderr('\nExample: python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo')
 
 
 def main(argv) -> None:
