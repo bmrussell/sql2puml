@@ -28,11 +28,13 @@ def EmitPumlFooter():
     print('\n@enduml')
 
 
+# Use table name lowercased and with spaces replaced by underscores
+def PumlName(sqlName) -> str:
+    pumlName = sqlName.lower().replace(' ', '_')
+    return pumlName
+
 def EmitTableHeader(tablename):
-    # Use table name lowercased and with spaces replaced by underscores
-    pumlName = tablename.lower()
-    pumlName.replace(' ', '_')
-    print('entity "' + tablename + '" as ' + pumlName + ' {')
+    print('entity "' + tablename + '" as ' + PumlName(tablename) + ' {')
 
 
 def EmitTableDef(connection, table:Tabledef):
@@ -69,9 +71,7 @@ def EmitTable(connection, table:Tabledef):
 
 def EmitRelations(connection, table:Tabledef):
     for name, rel in table.Relationships.items():
-        print(rel.PumlRelation)
-
-
+        print(PumlName(rel.PrimaryTable.Name) + ' ' + rel.PumlRelation + ' ' + PumlName(rel.ForeignTable.Name))
 
 
 def printStderr(*a): 

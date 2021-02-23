@@ -92,6 +92,6 @@ class Relationdef:
             fmax = '{'
 
         foreign = fmin + fmax
-        self.PumlRelation = primaryTable.Name + ' ' + primary + '--' + foreign + ' ' + foreignTable.Name
+        self.PumlRelation = primary + '--' + foreign
         
 

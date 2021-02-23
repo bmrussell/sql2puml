@@ -1,0 +1,157 @@
+@startuml Northwind
+
+skinparam Linetype ortho
+
+entity "Categories" as categories {
+	* CategoryID:integer
+	--
+	* CategoryName:wvarchar[15]
+	Description:wlongvarchar[1073741823]
+	Picture:longvarbinary[2147483647]
+}
+
+entity "CustomerCustomerDemo" as customercustomerdemo {
+	* CustomerID:wchar[5]
+	* CustomerTypeID:wchar[10]
+}
+
+entity "CustomerDemographics" as customerdemographics {
+	* CustomerTypeID:wchar[10]
+	--
+	CustomerDesc:wlongvarchar[1073741823]
+}
+
+entity "Customers" as customers {
+	* CustomerID:wchar[5]
+	--
+	* CompanyName:wvarchar[40]
+	ContactName:wvarchar[30]
+	ContactTitle:wvarchar[30]
+	Address:wvarchar[60]
+	City:wvarchar[15]
+	Region:wvarchar[15]
+	PostalCode:wvarchar[10]
+	Country:wvarchar[15]
+	Phone:wvarchar[24]
+	Fax:wvarchar[24]
+}
+
+entity "Employees" as employees {
+	* EmployeeID:integer
+	--
+	* LastName:wvarchar[20]
+	* FirstName:wvarchar[10]
+	Title:wvarchar[30]
+	TitleOfCourtesy:wvarchar[25]
+	BirthDate:timestamp
+	HireDate:timestamp
+	Address:wvarchar[60]
+	City:wvarchar[15]
+	Region:wvarchar[15]
+	PostalCode:wvarchar[10]
+	Country:wvarchar[15]
+	HomePhone:wvarchar[24]
+	Extension:wvarchar[4]
+	Photo:longvarbinary[2147483647]
+	Notes:wlongvarchar[1073741823]
+	ReportsTo:integer
+	PhotoPath:wvarchar[255]
+}
+
+entity "EmployeeTerritories" as employeeterritories {
+	* EmployeeID:integer
+	* TerritoryID:wvarchar[20]
+}
+
+entity "Order Details" as order_details {
+	* OrderID:integer
+	* ProductID:integer
+	--
+	* UnitPrice:decimal
+	* Quantity:smallint
+	* Discount:real
+}
+
+entity "Orders" as orders {
+	* OrderID:integer
+	--
+	CustomerID:wchar[5]
+	EmployeeID:integer
+	OrderDate:timestamp
+	RequiredDate:timestamp
+	ShippedDate:timestamp
+	ShipVia:integer
+	Freight:decimal
+	ShipName:wvarchar[40]
+	ShipAddress:wvarchar[60]
+	ShipCity:wvarchar[15]
+	ShipRegion:wvarchar[15]
+	ShipPostalCode:wvarchar[10]
+	ShipCountry:wvarchar[15]
+}
+
+entity "Products" as products {
+	* ProductID:integer
+	--
+	* ProductName:wvarchar[40]
+	SupplierID:integer
+	CategoryID:integer
+	QuantityPerUnit:wvarchar[20]
+	UnitPrice:decimal
+	UnitsInStock:smallint
+	UnitsOnOrder:smallint
+	ReorderLevel:smallint
+	* Discontinued:bit
+}
+
+entity "Region" as region {
+	* RegionID:integer
+	--
+	* RegionDescription:wchar[50]
+}
+
+entity "Shippers" as shippers {
+	* ShipperID:integer
+	--
+	* CompanyName:wvarchar[40]
+	Phone:wvarchar[24]
+}
+
+entity "Suppliers" as suppliers {
+	* SupplierID:integer
+	--
+	* CompanyName:wvarchar[40]
+	ContactName:wvarchar[30]
+	ContactTitle:wvarchar[30]
+	Address:wvarchar[60]
+	City:wvarchar[15]
+	Region:wvarchar[15]
+	PostalCode:wvarchar[10]
+	Country:wvarchar[15]
+	Phone:wvarchar[24]
+	Fax:wvarchar[24]
+	HomePage:wlongvarchar[1073741823]
+}
+
+entity "Territories" as territories {
+	* TerritoryID:wvarchar[20]
+	--
+	* TerritoryDescription:wchar[50]
+	* RegionID:integer
+}
+
+categories ||--o{ products
+customerdemographics ||--|{ customercustomerdemo
+customers ||--|{ customercustomerdemo
+customers ||--o{ orders
+employees ||--o{ employees
+employees ||--|{ employeeterritories
+employees ||--o{ orders
+orders ||--|{ order_details
+products ||--|{ order_details
+region ||--|{ territories
+shippers ||--o{ orders
+suppliers ||--o{ products
+territories ||--|{ employeeterritories
+
+@enduml
