@@ -1,4 +1,4 @@
-# sql2puml
+# Description
 
 Convert MS SQL Schema to PlantUML diagram source using Python
 
@@ -21,9 +21,12 @@ Convert MS SQL Schema to PlantUML diagram source using Python
     Python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo
 
 
+# Output
+## Pubs
+![](tests/pubs.png)
 
-![](pubs.png)
+## Northwind
+![](tests/Northwind.png)
 
-
-## References
+# References
     https://github.com/mkleehammer/pyodbc/wiki/Cursor
