@@ -137,4 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# PUML default output folder
+out/
 test.puml

@@ -1,4 +1,6 @@
 import pyodbc
+import sys
+import getopt
 
 from tabledef import Tabledef
 from columndef import Columndef
@@ -52,7 +54,7 @@ def EmitTableDef(connection, table:Tabledef):
         if column.IsUnique:
             line = line + '*'
 
-        line = line + ':'
+        line = line + ':' + column.Datatype
         print(line)
 
 
@@ -69,32 +71,85 @@ def EmitRelations(connection, table:Tabledef):
     for name, rel in table.Relationships.items():
         print(rel.PumlRelation)
 
-def main() -> None:
-    try:
-        server = 'localhost'
-        port = '1433'
-        dbname = 'pubs'
-        schema = 'dbo'
-        conn = Connect(server, port, dbname)
 
+
+
+def printStderr(*a): 
+	# Here a is the array holding the objects 
+	# passed as the arguement of the function 
+	print(*a, file = sys.stderr) 
+
+
+def PrintUsage():
+    printStderr('Usage: SQL2PUML.PY OPTIONS [FILE]')
+    printStderr('OPTIONS')
+    printStderr('\t-d, --database <database name>\tName of database to get diagram for')
+    printStderr('\t-s, --schema <schema name>\tName of schema within the database, default dbo')
+    printStderr('\t[-h, --host <server name>]\tServer to connect to, default localhost')
+    printStderr('\t[-p, --port <SQL listen port>]\tPort to connect to, default 1433')
+    printStderr('\t[-o, --out <output filename>]\tFilename to save output to, default write to console')
+    printStderr('\nExample: SQL2PUML.PY -server localhost -port 1433 -dbname pubs -schema dbo')
+
+
+def main(argv) -> None:
+
+    host = 'localhost'
+    port = '1433'
+    dbname = ''
+    schema = 'dbo'
+    filename = ''
+    conn = None
+    fileHandle = None
+
+    try:
+        opts, args = getopt.getopt(argv, 'd:s:h:p:o:', ['database=','schema=','host=','port=','out='])
+        for opt, arg in opts:
+            if opt in ('-d', '--database'):
+                dbname = arg 
+            elif opt in ('-s', '--schema'):
+                schema = arg
+            elif opt in ('-h', '--host'):
+                host = arg
+            elif opt in ('-p', '--port'):
+                port = arg
+            elif opt in ('-o', '--out'):
+                filename = arg
+
+
+        if filename != '':            
+            original_stdout = sys.stdout
+            fileHandle = open(filename, 'w')                # Change the standard output to filename
+            sys.stdout = fileHandle
+
+        if dbname == '':
+            raise ValueError('No database name supplied')
+
+        conn = Connect(host, port, dbname)
         tables = Tabledef.Get(conn, schema)
         EmitPumlHeader(dbname)
         for name, table in tables.items():
             EmitTable(conn, table)
 
-        print('\n')
         for name, table in tables.items():
             EmitRelations(conn, table)
 
-
         EmitPumlFooter()
 
+    except getopt.GetoptError:
+        PrintUsage()
+
+    except ValueError as ve:
+        PrintUsage()
+
     except Exception as e:
-        print('EXCEPTION: ' + e)
-
+        printStderr('EXCEPTION: ' + e)
+    
     finally:
-        Disconnect(conn)
+        if fileHandle != None:
+            sys.stdout = fileHandle
 
+        if conn != None:
+            Disconnect(conn)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

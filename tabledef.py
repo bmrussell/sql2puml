@@ -26,7 +26,7 @@ class Tabledef:
                     mandatory = False
                 
                 pk = False
-                self.Columns[row.column_name] = Columndef(row.column_name, mandatory, row.data_type, tablename)
+                self.Columns[row.column_name] = Columndef(row.column_name, mandatory, row.data_type, row.column_size, tablename)
             cursor.close()            
         except Exception as e:
             self.Columns = None

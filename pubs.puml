@@ -1,0 +1,124 @@
+@startuml pubs
+
+skinparam Linetype ortho
+
+entity "authors" as authors {
+	* au_id:varchar[11]
+	--
+	* au_lname:varchar[40]
+	* au_fname:varchar[20]
+	* phone:char[12]
+	address:varchar[40]
+	city:varchar[20]
+	state:char[2]
+	zip:char[5]
+	* contract:bit
+}
+
+entity "discounts" as discounts {
+	--
+	* discounttype:varchar[40]
+	stor_id:char[4]
+	lowqty:smallint
+	highqty:smallint
+	* discount:decimal
+}
+
+entity "employee" as employee {
+	* emp_id:char[9]
+	--
+	* fname:varchar[20]
+	minit:char[1]
+	* lname:varchar[30]
+	* job_id:smallint
+	job_lvl:tinyint
+	* pub_id:char[4]
+	* hire_date:timestamp
+}
+
+entity "jobs" as jobs {
+	* job_id:smallint
+	--
+	* job_desc:varchar[50]
+	* min_lvl:tinyint
+	* max_lvl:tinyint
+}
+
+entity "pub_info" as pub_info {
+	* pub_id:char[4]
+	--
+	logo:longvarbinary[2147483647]
+	pr_info:longvarchar[2147483647]
+}
+
+entity "publishers" as publishers {
+	* pub_id:char[4]
+	--
+	pub_name:varchar[40]
+	city:varchar[20]
+	state:char[2]
+	country:varchar[30]
+}
+
+entity "roysched" as roysched {
+	--
+	* title_id:varchar[6]
+	lorange:integer
+	hirange:integer
+	royalty:integer
+}
+
+entity "sales" as sales {
+	* stor_id:char[4]
+	* ord_num:varchar[20]
+	* title_id:varchar[6]
+	--
+	* ord_date:timestamp
+	* qty:smallint
+	* payterms:varchar[12]
+}
+
+entity "stores" as stores {
+	* stor_id:char[4]
+	--
+	stor_name:varchar[40]
+	stor_address:varchar[40]
+	city:varchar[20]
+	state:char[2]
+	zip:char[5]
+}
+
+entity "titleauthor" as titleauthor {
+	* au_id:varchar[11]
+	* title_id:varchar[6]
+	--
+	au_ord:tinyint
+	royaltyper:integer
+}
+
+entity "titles" as titles {
+	* title_id:varchar[6]
+	--
+	* title:varchar[80]
+	* type:char[12]
+	pub_id:char[4]
+	price:decimal
+	advance:decimal
+	royalty:integer
+	ytd_sales:integer
+	notes:varchar[200]
+	* pubdate:timestamp
+}
+
+authors ||--|{ titleauthor
+jobs ||--|{ employee
+publishers ||--|{ employee
+publishers ||--|| pub_info
+publishers ||--o{ titles
+stores ||--o{ discounts
+stores ||--|{ sales
+titles ||--|{ roysched
+titles ||--|{ sales
+titles ||--|{ titleauthor
+
+@enduml
