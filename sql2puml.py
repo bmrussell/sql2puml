@@ -6,11 +6,36 @@ from tabledef import Tabledef
 from columndef import Columndef
 from relationdef import Relationdef
 
-def Connect(server, port, dbname):
-    connstr = ('Driver={SQL Server Native Client 11.0};'
-               'Server=' + server + ',' + port + ';'
-               'Database=' + dbname +
-               ';Trusted_Connection=yes;')
+def Connect(driverOverride, server, host, port, dbname, username, password):
+
+    if server == 'mssql':
+        driver = '{SQL Server}'
+        if driverOverride != '':
+            driver = driverOverride
+        if username == '':
+            #Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Trusted_Connection=Yes;
+            connstr = ('Driver=' + driver + ';'
+                    'Server=' + host + ',' + port + ';'
+                    'Database=' + dbname +
+                    ';Trusted_Connection=yes;')
+        else:
+            # Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
+            connstr = ('Driver=' + driver + ';'
+                    'Server=' + host + ',' + port + ';'
+                    'Database=' + dbname +
+                    ';Uid=' + username + ';Pwd=' + password + ';'
+                    )
+    elif server == 'mysql':
+        # Driver={MySQL ODBC 8.0 Unicode Driver};Server=myServerAddress;Port=3306;Database=myDataBase;User=myUsername;Password=myPassword;Option=3;
+        driver = '{MySQL ODBC 8.0 Unicode Driver}'
+        if driverOverride != '':
+            driver = driverOverride
+        connstr = ('Driver=' + driver + ';'
+                'Server=' + host + ';Port=' + port + ';' + 'Database=' + dbname +
+                ';User=' + username + ';Password=' + password + ';Option=3;'
+                )
+
+
     connection = pyodbc.connect(connstr)
     return connection
 
@@ -82,29 +107,37 @@ def printStderr(*a):
 
 def PrintUsage():
     printStderr('Usage: python sql2puml.py OPTIONS [FILE]')
-    printStderr('OPTIONS')
-    printStderr('\t-d, --database <database name>\tName of database to get diagram for')
-    printStderr('\t-s, --schema <schema name>\tName of schema within the database, default dbo')
+    printStderr('OPTIONS')    
+    printStderr('\t-d, --database <database name>\tName of database to get diagram for')    
+    printStderr('\t[-s, --schema <schema name>]\tName of schema within the database, default dbo with SQL Server')
+    printStderr('\t[-S, --server <RDBMS Server>]\tSupply one of mssql, mysql. Default is mssql')
     printStderr('\t[-h, --host <server name>]\tServer to connect to, default localhost')
     printStderr('\t[-p, --port <SQL listen port>]\tPort to connect to, default 1433')
     printStderr('\t[-o, --out <output filename>]\tFilename to save output to, default write to console')
+    printStderr('\t[-u, --user <username>]\tUsername to connect as')
+    printStderr('\t[-P, --password <password>]\tPassword to connect with')
     printStderr('\nExample: python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo')
 
 
 def main(argv) -> None:
-
+    server = 'mssql'
     host = 'localhost'
     port = '1433'
     dbname = ''
-    schema = 'dbo'
+    schema = ''
     filename = ''
     conn = None
     fileHandle = None
+    username = ''
+    password=''
+    driver = ''
 
     try:
-        opts, args = getopt.getopt(argv, 'd:s:h:p:o:', ['database=','schema=','host=','port=','out='])
+        opts, args = getopt.getopt(argv, 'S:d:s:h:p:o:u:P:D:', ['server=','database=','schema=','host=','port=','out=','user=','password=','driver='])
         for opt, arg in opts:
-            if opt in ('-d', '--database'):
+            if opt in ('-S', '--server'):
+                server = arg.lower()
+            elif opt in ('-d', '--database'):
                 dbname = arg 
             elif opt in ('-s', '--schema'):
                 schema = arg
@@ -114,6 +147,12 @@ def main(argv) -> None:
                 port = arg
             elif opt in ('-o', '--out'):
                 filename = arg
+            elif opt in ('-u', '--user'):
+                username = arg
+            elif opt in ('-P', '--password'):
+                password = arg
+            elif opt in ('-D', '--driver'):
+                password = arg
 
 
         if filename != '':            
@@ -124,7 +163,13 @@ def main(argv) -> None:
         if dbname == '':
             raise ValueError('No database name supplied')
 
-        conn = Connect(host, port, dbname)
+        if server == 'msql':
+            schema = ''
+
+        if server == 'mssql' and schema == '':
+            schema = 'dbo'
+
+        conn = Connect(driver, server, host, port, dbname, username, password)
         tables = Tabledef.Get(conn, schema)
         EmitPumlHeader(dbname)
         for name, table in tables.items():

@@ -1,0 +1,168 @@
+@startuml petshop
+
+skinparam Linetype ortho
+
+entity "tbl_customer" as tbl_customer {
+	customer_id:integer
+	--
+	* customer_code:wvarchar[30]
+	* avatar:longvarbinary[65535]
+	* customer_name:wvarchar[30]
+	* email_address:wvarchar[30]
+	* contact_number:wvarchar[15]
+	* complete_address:wvarchar[100]
+	* username:wvarchar[30]
+	* password:wvarchar[30]
+	* status:integer
+	* user_id:integer
+}
+
+entity "tbl_order" as tbl_order {
+	order_id:integer
+	--
+	* reference_no:wvarchar[30]
+	* customer_id:integer
+	* order_date:date
+	* order_status:integer
+	* expected_delivery_date:date
+	* total_amount:real
+	* number_of_items:integer
+	* user_id:integer
+}
+
+entity "tbl_order_detail" as tbl_order_detail {
+	order_detail_id:integer
+	--
+	* order_id:integer
+	* pet_product_id:integer
+	* quantity:integer
+	* quantity_price:real
+	* status:integer
+	* remarks:wvarchar[100]
+	* vendor_id:integer
+}
+
+entity "tbl_payment" as tbl_payment {
+	payment_id:integer
+	--
+	* reference_no:wvarchar[30]
+	* payment_for:integer
+	* amount_paid:real
+	* remarks:wvarchar[100]
+	* payment_status:integer
+	* paid_by:wvarchar[30]
+	* user_id:integer
+}
+
+entity "tbl_pet" as tbl_pet {
+	pet_id:integer
+	--
+	* pet_description:wvarchar[50]
+	* pet_category_id:integer
+	* vendor_id:integer
+	* pet_images:longvarbinary[65535]
+	* pet_status:integer
+	* user_id:integer
+}
+
+entity "tbl_pet_category" as tbl_pet_category {
+	pet_category_id:integer
+	--
+	* pet_category_name:wvarchar[30]
+	* user_id:integer
+}
+
+entity "tbl_pet_product" as tbl_pet_product {
+	pet_product_id:integer
+	--
+	* product_code:wvarchar[30]
+	* product_name:wvarchar[30]
+	* product_detail:wvarchar[100]
+	* product_category_id:integer
+	* quantity_on_hand:integer
+	* vendor_price:real
+	* retail_price:real
+	* discount:real
+	* vendor_id:integer
+	* status:integer
+	* user_id:integer
+}
+
+entity "tbl_pet_product_category" as tbl_pet_product_category {
+	product_category_id:integer
+	--
+	* category_name:wvarchar[30]
+	* user_id:integer
+}
+
+entity "tbl_service" as tbl_service {
+	service_id:integer
+	--
+	* reference_no:wvarchar[30]
+	* service_name:wvarchar[30]
+	* service_detail:wvarchar[100]
+	* service_fee:real
+	* vendor_id:integer
+	* user_id:integer
+}
+
+entity "tbl_user" as tbl_user {
+	user_id:integer
+	--
+	* username:varchar[30]
+	* password:varchar[30]
+	* avatar:longvarbinary[65535]
+	* fullname:varchar[50]
+	* contact:varchar[15]
+	* email:varchar[30]
+	* user_category_id:integer
+	* status:integer
+}
+
+entity "tbl_user_group" as tbl_user_group {
+	user_group_id:integer
+	--
+	* group_name:varchar[30]
+	* description:varchar[50]
+	* allow_add:integer
+	* allow_edit:integer
+	* allow_delete:integer
+	* allow_print:integer
+	* allow_import:integer
+	* allow_export:integer
+}
+
+entity "tbl_vendor" as tbl_vendor {
+	company_id:integer
+	--
+	* company_name:wvarchar[50]
+	* company_contact_person:wvarchar[30]
+	* company_email:wvarchar[30]
+	* company_contact_number:wvarchar[15]
+	* company_website:wvarchar[30]
+	* company_profile:wvarchar[250]
+	* vendor_username:wvarchar[30]
+	* vendor_password:wvarchar[30]
+	* user_id:integer
+}
+
+tbl_customer |o--|{ tbl_order
+tbl_order |o--|{ tbl_order_detail
+tbl_pet_category |o--|{ tbl_pet
+tbl_pet_product |o--|{ tbl_order_detail
+tbl_pet_product_category |o--|{ tbl_pet_product
+tbl_user |o--|{ tbl_customer
+tbl_user |o--|{ tbl_order
+tbl_user |o--|{ tbl_payment
+tbl_user |o--|{ tbl_pet
+tbl_user |o--|{ tbl_pet_category
+tbl_user |o--|{ tbl_pet_product
+tbl_user |o--|{ tbl_pet_product_category
+tbl_user |o--|{ tbl_service
+tbl_user |o--|{ tbl_vendor
+tbl_user_group |o--|{ tbl_user
+tbl_vendor |o--|{ tbl_order_detail
+tbl_vendor |o--|{ tbl_pet
+tbl_vendor |o--|{ tbl_service
+
+@enduml

@@ -39,7 +39,10 @@ class Tabledef:
             # Get the tables for this connection
             cursor = connection.cursor()
             tables = {}
-            cursorTables = cursor.tables(schema=dbschema, tableType='TABLE').fetchall()
+            if dbschema == '':
+                cursorTables = cursor.tables(tableType='TABLE').fetchall()
+            else:
+                cursorTables = cursor.tables(schema=dbschema, tableType='TABLE').fetchall()
             for tableRow in cursorTables:
                 if tableRow.table_name[:3] == 'sys':
                     continue                                    # Exclude sys* tables 
