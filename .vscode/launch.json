@@ -1,0 +1,54 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name":     "Northwind",
+            "type":     "python",
+            "request":  "launch",
+            "program":  "sql2puml.py",
+            "console":  "integratedTerminal",
+            "args":[    "--database","Northwind"
+                        ,"--schema","dbo"
+                        ,"--host","localhost"
+                        ,"--port","1433"
+                        ,"--out","tests\\Northwind.puml"
+                    ],
+        }
+        ,
+        {
+            "name":     "MySQL",
+            "type":     "python",
+            "request":  "launch",
+            "program":  "sql2puml.py",
+            "console":  "integratedTerminal",
+            "args":[    "--server", "mysql"
+                        ,"--database","petshop"
+                        ,"--host","localhost"
+                        ,"--port","3306"
+                        ,"--out","tests\\petshop.puml"
+                        ,"--user","root"
+                        ,"--password","*****"
+                    ],
+        }
+        ,
+        {
+            "name":     "MySQL Ovverride",
+            "type":     "python",
+            "request":  "launch",
+            "program":  "sql2puml.py",
+            "console":  "integratedTerminal",
+            "args":[    "--server", "mysql"
+                        ,"--database","petshop"
+                        ,"--host","localhost"
+                        ,"--port","3306"
+                        ,"--out","tests\\petshop.puml"
+                        ,"--user","root"
+                        ,"--password","*****"
+                        ,"--driver=", "{MySQL ODBC 8.0 Unicode Driver}"
+                    ],
+        }
+    ]
+}
