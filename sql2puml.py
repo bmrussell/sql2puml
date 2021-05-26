@@ -12,16 +12,22 @@ def Connect(driverOverride, server, host, port, dbname, username, password):
         driver = '{SQL Server}'
         if driverOverride != '':
             driver = driverOverride
+        
+        if (port != '1433'):
+            thePort = ',' + port
+        else:
+            thePort = ''
+
         if username == '':
             #Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Trusted_Connection=Yes;
             connstr = ('Driver=' + driver + ';'
-                    'Server=' + host + ',' + port + ';'
+                    'Server=' + host + thePort + ';'
                     'Database=' + dbname +
                     ';Trusted_Connection=yes;')
         else:
             # Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
             connstr = ('Driver=' + driver + ';'
-                    'Server=' + host + ',' + port + ';'
+                    'Server=' + host + thePort + ';'
                     'Database=' + dbname +
                     ';Uid=' + username + ';Pwd=' + password + ';'
                     )
@@ -35,7 +41,7 @@ def Connect(driverOverride, server, host, port, dbname, username, password):
                 ';User=' + username + ';Password=' + password + ';Option=3;'
                 )
 
-
+    print(connstr)
     connection = pyodbc.connect(connstr)
     return connection
 
@@ -152,7 +158,7 @@ def main(argv) -> None:
             elif opt in ('-P', '--password'):
                 password = arg
             elif opt in ('-D', '--driver'):
-                password = arg
+                driver = arg
 
 
         if filename != '':            
@@ -187,7 +193,7 @@ def main(argv) -> None:
         PrintUsage()
 
     except Exception as e:
-        printStderr('EXCEPTION: ' + e)
+        printStderr('EXCEPTION: ' + e.args[1])
     
     finally:
         if fileHandle != None:

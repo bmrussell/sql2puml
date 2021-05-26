@@ -5,50 +5,105 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name":     "Northwind",
-            "type":     "python",
-            "request":  "launch",
-            "program":  "sql2puml.py",
-            "console":  "integratedTerminal",
-            "args":[    "--database","Northwind"
-                        ,"--schema","dbo"
-                        ,"--host","localhost"
-                        ,"--port","1433"
-                        ,"--out","tests\\Northwind.puml"
-                    ],
-        }
-        ,
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
         {
-            "name":     "MySQL",
-            "type":     "python",
-            "request":  "launch",
-            "program":  "sql2puml.py",
-            "console":  "integratedTerminal",
-            "args":[    "--server", "mysql"
-                        ,"--database","petshop"
-                        ,"--host","localhost"
-                        ,"--port","3306"
-                        ,"--out","tests\\petshop.puml"
-                        ,"--user","root"
-                        ,"--password","*****"
-                    ],
-        }
-        ,
+            "name": "E1-MIDAS",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--database",
+                "E1",
+                "--schema",
+                "dbo",
+                "--host",
+                "localhost",
+                "--port",
+                "1433",
+                "--out",
+                "tests\\E1.puml",
+                "--driver",
+                "{ODBC Driver 17 for SQL Server}"
+            ],
+        },
         {
-            "name":     "MySQL Ovverride",
-            "type":     "python",
-            "request":  "launch",
-            "program":  "sql2puml.py",
-            "console":  "integratedTerminal",
-            "args":[    "--server", "mysql"
-                        ,"--database","petshop"
-                        ,"--host","localhost"
-                        ,"--port","3306"
-                        ,"--out","tests\\petshop.puml"
-                        ,"--user","root"
-                        ,"--password","*****"
-                        ,"--driver=", "{MySQL ODBC 8.0 Unicode Driver}"
-                    ],
+            "name": "Northwind",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--database",
+                "Northwind",
+                "--schema",
+                "dbo",
+                "--host",
+                "localhost",
+                "--port",
+                "1433",
+                "--out",
+                "tests\\Northwind.puml",
+                "--driver",
+                "{ODBC Driver 17 for SQL Server}",
+                "--user",
+                "sa",
+                "--password",
+                "##REPLACE##"
+            ],
+        },
+        {
+            "name": "MySQL",
+            "type": "python",
+            "request": "launch",
+            "program": "sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--server",
+                "mysql",
+                "--database",
+                "petshop",
+                "--host",
+                "localhost",
+                "--port",
+                "3306",
+                "--out",
+                "tests\\petshop.puml",
+                "--user",
+                "root",
+                "--password",
+                "*****"
+            ],
+        },
+        {
+            "name": "MySQL Ovverride",
+            "type": "python",
+            "request": "launch",
+            "program": "sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--server",
+                "mysql",
+                "--database",
+                "petshop",
+                "--host",
+                "localhost",
+                "--port",
+                "3306",
+                "--out",
+                "tests\\petshop.puml",
+                "--user",
+                "root",
+                "--password",
+                "*****",
+                "--driver=",
+                "{MySQL ODBC 8.0 Unicode Driver}"
+            ],
         }
     ]
 }
