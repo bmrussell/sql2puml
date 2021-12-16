@@ -12,27 +12,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "E1-MIDAS",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}\\sql2puml.py",
-            "console": "integratedTerminal",
-            "args": [
-                "--database",
-                "E1",
-                "--schema",
-                "dbo",
-                "--host",
-                "localhost",
-                "--port",
-                "1433",
-                "--out",
-                "tests\\E1.puml",
-                "--driver",
-                "{ODBC Driver 17 for SQL Server}"
-            ],
-        },
-        {
             "name": "Northwind",
             "type": "python",
             "request": "launch",
@@ -54,7 +33,57 @@
                 "--user",
                 "sa",
                 "--password",
-                "##REPLACE##"
+                "${env:NorthwindDbUser}"
+            ],
+        },
+        {
+            "name": "MI",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--database",
+                "${env:MIDbName}",
+                "--schema",
+                "dbo",
+                "--host",
+                "${env:MIDbServer}",
+                "--port",
+                "${env:MIDbPort}",
+                "--out",
+                "tests\\${env:MIDbName}.puml",
+                "--driver",
+                "{ODBC Driver 17 for SQL Server}",
+                "--user",
+                "${env:MIDBUser}",
+                "--password",
+                "${env:MIDbPassword}"
+            ],
+        },
+        {
+            "name": "Quote",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\sql2puml.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--database",
+                "${env:QuoteDbName}",
+                "--schema",
+                "dbo",
+                "--host",
+                "${env:QuoteDbServer}",
+                "--port",
+                "${env:QuoteDbPort}",
+                "--out",
+                "tests\\${env:QuoteDbName}.puml",
+                "--driver",
+                "{ODBC Driver 17 for SQL Server}",
+                "--user",
+                "${env:QuoteDBUser}",
+                "--password",
+                "${env:QuoteDbPassword}"
             ],
         },
         {
@@ -75,34 +104,9 @@
                 "--out",
                 "tests\\petshop.puml",
                 "--user",
-                "root",
+                "${env:MySQLDBUser}",
                 "--password",
-                "*****"
-            ],
-        },
-        {
-            "name": "MySQL Ovverride",
-            "type": "python",
-            "request": "launch",
-            "program": "sql2puml.py",
-            "console": "integratedTerminal",
-            "args": [
-                "--server",
-                "mysql",
-                "--database",
-                "petshop",
-                "--host",
-                "localhost",
-                "--port",
-                "3306",
-                "--out",
-                "tests\\petshop.puml",
-                "--user",
-                "root",
-                "--password",
-                "*****",
-                "--driver=",
-                "{MySQL ODBC 8.0 Unicode Driver}"
+                "${env:MySQLDbPassword}"
             ],
         }
     ]
