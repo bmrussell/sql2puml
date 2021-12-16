@@ -26,13 +26,13 @@ Convert MS SQL Schema to PlantUML diagram source using Python
 
 # Output
 ## Pubs (SQL Server)
-![](tests/pubs.png)
+![](samples/pubs.png)
 
 ## Northwind (SQL Server)
-![](tests/Northwind.png)
+![](samples/Northwind.png)
 
 ## Petshop (MySQL)
-![](tests/petshop.png)
+![](samples/petshop.png)
 # References
 1. [PyODBC Cursor](https://github.com/mkleehammer/pyodbc/wiki/Cursor)
 2. [MySQL ODBC Driver](https://dev.mysql.com/downloads/file/?id=501047)
