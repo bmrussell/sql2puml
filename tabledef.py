@@ -1,17 +1,21 @@
+import pyodbc
 from columndef import Columndef
 from relationdef import Relationdef
 
+
 class Tabledef:
-    Name = ''
+    Name = ''    
     Columns = {}
     Relationships = {}
     CompositePK = False
+    RowCount = None
     
     def __init__(self, name:str):
         self.Name = name
         self.Columns = {}
         self.Relationships = {}      # Relationdef[]
         self.CompositePK = False    
+        self.RowCount = None
 
     
     def __GetColumns(self, connection, tablename:str) -> None:
@@ -30,6 +34,25 @@ class Tabledef:
             cursor.close()            
         except Exception as e:
             self.Columns = None
+        finally:
+            return
+
+    def __GetRowCount(self, connection, tablename:str) -> None:
+        queries = { "Microsoft SQL Server": f"""SELECT p.rows AS RowCounts FROM sys.tables t INNER JOIN sys.partitions p ON t.object_id = p.OBJECT_ID WHERE t.NAME = '{tablename}' AND t.is_ms_shipped = 0 GROUP BY t.Name, p.Rows""",
+                    "MySQL": f"""SELECT table_rows from information_schema.tables where table_type = 'BASE TABLE' and table_schema not in('information_schema', 'sys', 'performance_schema', 'mysql') and table_name = '{tablename}' group by table_name;"""
+                    }
+        try:
+            self.RowCount = None
+            dbms = connection.getinfo(pyodbc.SQL_DBMS_NAME)
+            cursor = connection.cursor()
+            cursor.execute(queries[dbms])
+            row = cursor.fetchone()
+            while row:
+                self.RowCount = row[0]
+                row = cursor.fetchone()
+            cursor.close()
+        except Exception as e:
+            self.RowCount = None
         finally:
             return
     
@@ -52,6 +75,7 @@ class Tabledef:
             # For each table get the columns
             for key, value in tables.items():
                 value.__GetColumns(connection, key)          
+                value.__GetRowCount(connection, key)
     
             # Mark the columns comprising the primary key
             for key, value in tables.items():

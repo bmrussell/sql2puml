@@ -49,9 +49,20 @@ def Disconnect(connection) -> None:
     connection.close()
 
 
-def EmitPumlHeader(dbname):
+def EmitPumlHeader(dbname, zerorows):
     print('@startuml ' + dbname + '\n')
     print('skinparam Linetype ortho\n')
+    if zerorows:
+        if zerorows == 'show':
+            print("""hide stereotype
+hide circle            
+skinparam class<<empty>> {
+  backgroundColor #FFF
+  borderColor #CCC
+  fontColor #CCC
+}""")
+        else:
+            print(f"{zerorows} <<empty>>\n")
 
 
 def EmitPumlFooter():
@@ -63,8 +74,9 @@ def PumlName(sqlName) -> str:
     pumlName = sqlName.lower().replace(' ', '_')
     return pumlName
 
-def EmitTableHeader(tablename):
-    print('entity "' + tablename + '" as ' + PumlName(tablename) + ' {')
+def EmitTableHeader(tablename, rowcount):    
+    stereotype = " <<empty>> " if rowcount is not None and rowcount == 0 else ""
+    print('entity "' + tablename + '" as ' + PumlName(tablename) + stereotype + ' {')
 
 
 def EmitTableDef(connection, table:Tabledef):
@@ -95,7 +107,7 @@ def EmitTableFooter():
 
 
 def EmitTable(connection, table:Tabledef):
-    EmitTableHeader(table.Name)
+    EmitTableHeader(table.Name, table.RowCount)
     EmitTableDef(connection, table)
     EmitTableFooter()
 
@@ -121,6 +133,7 @@ def PrintUsage():
     printStderr('\t[-o, --out <output filename>]\tFilename to save output to, default write to console')
     printStderr('\t[-u, --user <username>]\tUsername to connect as')
     printStderr('\t[-P, --password <password>]\tPassword to connect with')
+    printStderr('\t[-z, --zerorows <mode>]\tSupply one of show, hide, remove. Default is None, i.e., empty tables appear normally')
     printStderr('\nExample: python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo')
 
 
@@ -136,9 +149,10 @@ def main(argv) -> None:
     username = ''
     password=''
     driver = ''
+    zerorows = None
 
     try:
-        opts, args = getopt.getopt(argv, 'S:d:s:h:p:o:u:P:D:', ['server=','database=','schema=','host=','port=','out=','user=','password=','driver='])
+        opts, args = getopt.getopt(argv, 'S:d:s:h:p:o:u:P:D:z:', ['server=','database=','schema=','host=','port=','out=','user=','password=','driver=','zerorows='])
         for opt, arg in opts:
             if opt in ('-S', '--server'):
                 server = arg.lower()
@@ -158,7 +172,8 @@ def main(argv) -> None:
                 password = arg
             elif opt in ('-D', '--driver'):
                 driver = arg
-
+            elif opt in ('-z', '--zerorows'):
+                zerorows = arg
 
         if filename != '':            
             original_stdout = sys.stdout
@@ -176,7 +191,7 @@ def main(argv) -> None:
 
         conn = Connect(driver, server, host, port, dbname, username, password)
         tables = Tabledef.Get(conn, schema)
-        EmitPumlHeader(dbname)
+        EmitPumlHeader(dbname, zerorows)
         for name, table in tables.items():
             EmitTable(conn, table)
 
