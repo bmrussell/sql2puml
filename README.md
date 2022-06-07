@@ -34,6 +34,11 @@ Convert MS SQL Schema to PlantUML diagram source using Python
 
 ## Petshop (MySQL)
 ![](samples/petshop.png)
+
+# Install Issues
+## M1 Mac, Mac OS X
+* Follow [these homebrew instructions from MS](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver16) to install the libraries, followed by the instructions in [this github comment](https://github.com/mkleehammer/pyodbc/issues/385#issuecomment-953105425) to install the `pyodbc` module.  Then use the `-D /opt/homebrew/lib/libmsodbcsql.17.dylib` flag on the cli.
+
 # References
 1. [PyODBC Cursor](https://github.com/mkleehammer/pyodbc/wiki/Cursor)
 2. [MySQL ODBC Driver](https://dev.mysql.com/downloads/file/?id=501047)
