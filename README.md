@@ -19,6 +19,7 @@ Convert MS SQL Schema to PlantUML diagram source using Python
  |-u, --user *user name*|User name to log in as.<br>Omit to use trusted authentication with SQL Server|
  |-P, --password *password*|Password to log in with<br>omit to use trusted authentication with SQL Server|
  |-D, --driver *ODBC Driver name*|ODBC Driver name to override in connection string<br>Use `Get-OdbcDriver` in PowerShell to get full list of drivers on your system|
+ |-z, --zerorows *mode*|mode=<br>`show` to display empty tables as "greyed-out",<br>`hide` to omit empty tables, retaining space,<br>`remove` to omit empty tables and reclaim space|
 
 **Example:** 
 
