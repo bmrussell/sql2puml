@@ -20,26 +20,16 @@ def Connect(driverOverride, server, host, port, dbname, username, password):
 
         if username == '':
             #Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Trusted_Connection=Yes;
-            connstr = ('Driver=' + driver + ';'
-                    'Server=' + host + thePort + ';'
-                    'Database=' + dbname +
-                    ';Trusted_Connection=yes;')
+            connstr = (f'Driver={driver};Server={host}{thePort};Database={dbname};Trusted_Connection=yes;')
         else:
             # Driver={SQL Server};Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
-            connstr = ('Driver=' + driver + ';'
-                    'Server=' + host + thePort + ';'
-                    'Database=' + dbname +
-                    ';Uid=' + username + ';Pwd=' + password + ';'
-                    )
+            connstr = (f'Driver={driver};Server={host}{thePort};Database={dbname};Uid={username};Pwd={password};')
     elif server == 'mysql':
         # Driver={MySQL ODBC 8.0 Unicode Driver};Server=myServerAddress;Port=3306;Database=myDataBase;User=myUsername;Password=myPassword;Option=3;
         driver = '{MySQL ODBC 8.0 Unicode Driver}'
         if driverOverride != '':
             driver = driverOverride
-        connstr = ('Driver=' + driver + ';'
-                'Server=' + host + ';Port=' + port + ';' + 'Database=' + dbname +
-                ';User=' + username + ';Password=' + password + ';Option=3;'
-                )
+        connstr = (f'Driver={driver};Server={host};Port={port};Database={dbname};User={username};Password={password};Option=3;')
     
     connection = pyodbc.connect(connstr)
     return connection
@@ -50,7 +40,7 @@ def Disconnect(connection) -> None:
 
 
 def EmitPumlHeader(dbname, zerorows):
-    print('@startuml ' + dbname + '\n')
+    print(f'@startuml {dbname}\n')
     print('skinparam Linetype ortho\n')
     if zerorows:
         if zerorows == 'show':
@@ -111,9 +101,12 @@ def EmitTable(connection, table:Tabledef):
     EmitTableDef(connection, table)
     EmitTableFooter()
 
-def EmitRelations(connection, table:Tabledef):
+def EmitRelations(connection, table:Tabledef, colnames):
     for name, rel in table.Relationships.items():
-        print(PumlName(rel.PrimaryTable.Name) + ' ' + rel.PumlRelation + ' ' + PumlName(rel.ForeignTable.Name))
+        names=''
+        if colnames == True:
+            names = f' : {rel.PrimaryColumn.Name}  = {rel.ForeignColumn.Name}'
+        print(f'{PumlName(rel.PrimaryTable.Name)} {rel.PumlRelation} {PumlName(rel.ForeignTable.Name)}{names}')
 
 
 def printStderr(*a): 
@@ -133,6 +126,7 @@ def PrintUsage():
     printStderr('\t[-o, --out <output filename>]\tFilename to save output to, default write to console')
     printStderr('\t[-u, --user <username>]\tUsername to connect as')
     printStderr('\t[-P, --password <password>]\tPassword to connect with')
+    printStderr('\r[-n, --names\tInclude column names on relationships')
     printStderr('\t[-z, --zerorows <mode>]\tSupply one of show, hide, remove. Default is None, i.e., empty tables appear normally')
     printStderr('\nExample: python sql2puml.py -server localhost -port 1433 -dbname pubs -schema dbo')
 
@@ -150,9 +144,10 @@ def main(argv) -> None:
     password=''
     driver = ''
     zerorows = None
+    colnames = False
 
     try:
-        opts, args = getopt.getopt(argv, 'S:d:s:h:p:o:u:P:D:z:', ['server=','database=','schema=','host=','port=','out=','user=','password=','driver=','zerorows='])
+        opts, args = getopt.getopt(argv, 'S:d:s:h:p:o:u:P:D:z:n', ['server=','database=','schema=','host=','port=','out=','user=','password=','driver=','zerorows=','names'])
         for opt, arg in opts:
             if opt in ('-S', '--server'):
                 server = arg.lower()
@@ -170,6 +165,8 @@ def main(argv) -> None:
                 username = arg
             elif opt in ('-P', '--password'):
                 password = arg
+            elif opt in ('-n', '--names'):
+                colnames = True
             elif opt in ('-D', '--driver'):
                 driver = arg
             elif opt in ('-z', '--zerorows'):
@@ -196,7 +193,7 @@ def main(argv) -> None:
             EmitTable(conn, table)
 
         for name, table in tables.items():
-            EmitRelations(conn, table)
+            EmitRelations(conn, table, colnames)
 
         EmitPumlFooter()
 
@@ -207,7 +204,7 @@ def main(argv) -> None:
         PrintUsage()
 
     except Exception as e:
-        printStderr('EXCEPTION: ' + e.args[1])
+        printStderr(f'EXCEPTION: {e.args[1]}')
     
     finally:
         if fileHandle != None:

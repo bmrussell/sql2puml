@@ -79,11 +79,12 @@
                 "--out",
                 "tests\\${env:QuoteDbName}.puml",
                 "--driver",
-                "{ODBC Driver 17 for SQL Server}",
+                "{ODBC Driver 13 for SQL Server}",
                 "--user",
                 "${env:QuoteDBUser}",
                 "--password",
-                "${env:QuoteDbPassword}"
+                "${env:QuoteDbPassword}",
+                "--names"
             ],
         },
         {
